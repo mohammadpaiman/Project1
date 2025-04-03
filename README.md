@@ -1,33 +1,21 @@
 # Project 1 — Network Log Analysis
 
-This project implements three Python functions to analyze authentication and firewall logs.
+This Python project analyzes authentication and firewall logs to extract login times, failed login attempts, and IP addresses that were both blocked and used for invalid logins.
 
-Functions:
+## How to Run
 
-get_user_auth_times(user_id)  
-Returns a list of the date and time of logins for a given user from log/auth.log.x files.
+1. Place all your log files inside a folder named `log/` in the same directory as the script.
 
-get_invalid_logins()  
-Returns a dictionary mapping invalid user IDs to the number of failed login attempts from log/auth.log.x files.
+2. Make sure your log files follow these naming patterns:
+   - Authentication logs: `auth.log`, `auth.log.1`, `auth.log.2`, etc.
+   - Firewall logs: `ufw.log`, `ufw.log.1`, etc.
 
-compare_invalid_IPs()  
-Returns a set of IP addresses that are used for both invalid logins and blocked by the firewall using log/auth.log and log/ufw.log files.
+3. Run the script using the command below:
 
-How to Run:
 
-1. Place all your log files inside a folder named log/
-2. Run the script using:
+## main.py
 
-python3 main.py
-
-Example Output:
-
-['Feb 21 13:29:56', 'Feb 21 13:36:38', 'Feb 21 13:33:56']
-
-{'admin': 17, 'oracle': 21, 'test': 21, ...}
-
-{'141.98.11.23', '64.62.197.182', '45.125.65.126', ...}
-
+```python
 import os
 import re
 
@@ -59,8 +47,10 @@ def get_invalid_logins():
 def compare_invalid_IPs():
     auth_ips = set()
     fw_ips = set()
+
     auth_pattern = re.compile(r"Invalid user \S+ from (\d+\.\d+\.\d+\.\d+)")
     fw_pattern = re.compile(r"\[UFW BLOCK\].*SRC=(\d+\.\d+\.\d+\.\d+)")
+
     for filename in os.listdir("log"):
         path = os.path.join("log", filename)
         if filename.startswith("auth.log"):
@@ -77,7 +67,7 @@ def compare_invalid_IPs():
                         fw_ips.add(match.group(1))
     return auth_ips & fw_ips
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     print(get_user_auth_times("tylermoore"))
     print(get_invalid_logins())
     print(compare_invalid_IPs())
